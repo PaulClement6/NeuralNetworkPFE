@@ -1,1 +1,0 @@
-#st-supabase-connection==x.x.x
