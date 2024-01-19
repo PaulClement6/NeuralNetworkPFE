@@ -36,4 +36,17 @@ if st.session_state.bouton:
 st.title("Découvre ce que tu bois !")
 
 
+# Connexion à la base de données local
 
+import psycopg2
+import streamlit as st
+
+# Configuration de la connexion à la base de données
+def connect_to_db():
+    conn = psycopg2.connect(
+        dbname="wine",  # Nom de la base de données
+        user="postgres",  # Nom d'utilisateur
+        host="localhost",  # l'adresse IP de votre serveur
+        port="5432"
+    )
+    return conn
