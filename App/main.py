@@ -44,9 +44,26 @@ import streamlit as st
 # Configuration de la connexion à la base de données
 def connect_to_db():
     conn = psycopg2.connect(
-        dbname="wine",  # Nom de la base de données
+        dbname="bourgogne",  # Nom de la base de données
         user="postgres",  # Nom d'utilisateur
         host="localhost",  # l'adresse IP de votre serveur
         port="5432"
     )
     return conn
+
+def run_query(query):
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+    conn.close()
+    return data
+
+st.title('Test de connexion à la base de données')
+if st.button('Tester la connexion'):
+    try:
+        data = run_query("SELECT version();")  # Requête de test
+        st.success(f"Connexion réussie ! Version de PostgreSQL : {data[0][0]}")
+    except Exception as e:
+        st.error(f"Échec de la connexion : {e}")
