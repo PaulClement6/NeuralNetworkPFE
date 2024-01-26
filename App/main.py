@@ -60,10 +60,12 @@ def run_query(query):
     conn.close()
     return data
 
-st.title('Test de connexion à la base de données')
-if st.button('Tester la connexion'):
-    try:
-        data = run_query("SELECT version();")  # Requête de test
-        st.success(f"Connexion réussie ! Version de PostgreSQL : {data[0][0]}")
-    except Exception as e:
-        st.error(f"Échec de la connexion : {e}")
+# Test de connexion réussie
+
+# st.title('Test de connexion à la base de données')
+# if st.button('Tester la connexion'):
+#    try:
+#        data = run_query("SELECT version();")  # Requête de test
+#        st.success(f"Connexion réussie ! Version de PostgreSQL : {data[0][0]}")
+#    except Exception as e:
+#        st.error(f"Échec de la connexion : {e}")
