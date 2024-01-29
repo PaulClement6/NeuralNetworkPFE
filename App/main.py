@@ -24,8 +24,9 @@ if st.session_state.bouton:
     picture = st.camera_input("")
     if picture is not None:
         img=Image.open(picture)
+        img_size=np.size(img)
         img_array=np.array(img)
-        st.write(img_array)
+        st.write(img_size)
 
 
         st.write(img_array.shape)

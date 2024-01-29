@@ -5,7 +5,7 @@ st.title("Tes bouteilles précedements scannées.")
 conn = st.connection("supabase",type=SupabaseConnection)
 
 # Perform query.
-rows = conn.query("*", table="vins", ttl="10m").execute()
+rows = conn.query("*", table="vins", ttl="10m").eq("Date","2001").execute()
 
 # Print results.
 for row in rows.data:
