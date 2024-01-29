@@ -69,3 +69,8 @@ def run_query(query):
 #        st.success(f"Connexion réussie ! Version de PostgreSQL : {data[0][0]}")
 #    except Exception as e:
 #        st.error(f"Échec de la connexion : {e}")
+
+if st.button('Afficher les données'):
+    data = run_query("SELECT * FROM ma_table")
+    for row in data:
+        st.write(row)
