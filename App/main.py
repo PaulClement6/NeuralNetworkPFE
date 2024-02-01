@@ -44,16 +44,18 @@ import requests
 import csv
 from io import StringIO
 
-# Configuration de la connexion à la base de données
+# Fonction de configuration de la connexion à la base de données
 def connect_to_db():
     conn = psycopg2.connect(
-        dbname="bourgogne",  # Nom de la base de données
-        user="postgres",  # Nom d'utilisateur
+        #bourgogne
+        dbname="vinAI",  # Nom de la base de données
+        user="root",  # Nom d'utilisateur
+        password = "root",
         host="localhost",  # l'adresse IP de votre serveur
         port="5432"
     )
     return conn
-
+#Fonction permettant d'envoyer une requete sql a postgre
 def run_query(query):
     conn = connect_to_db()
     cur = conn.cursor()
