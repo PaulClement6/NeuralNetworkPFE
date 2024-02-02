@@ -133,3 +133,16 @@ if st.button('Importer Cheval Blanc depuis Supabase'):
         st.success('Importation réussie !')
     except Exception as e:
         st.error(f'Une erreur est survenue : {e}')
+import requests
+
+def check_internet():
+    try:
+        requests.get('http://www.google.com', timeout=1)
+        return True
+    except requests.ConnectionError:
+        return False
+
+if check_internet():
+    st.title("Vous êtes connecté à Internet.")
+else:
+    st.title("Vous n'êtes pas connecté à Internet.")
