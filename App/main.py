@@ -52,8 +52,7 @@ def models(picture):
         st.title("Aucun bouteille détectée")
 
 
-# titre de la page
-st.title("Découvre ce que tu bois !")
+#st.title("Découvre ce que tu bois !")
 
 # Ajout de variable session permmettant d'ouvrir la camera
 if "bouton" not in st.session_state:
@@ -66,7 +65,7 @@ def active_cam():
 
 # creation de bouton pour ouvrir la camera
 
-st.button("Open/Close Camera", on_click=active_cam)
+#st.button("Open/Close Camera", on_click=active_cam)
 
 # Vérifier si la caméra est ouverte avant de capturer une photo
 if st.session_state.bouton:
@@ -78,7 +77,14 @@ if st.session_state.bouton:
         models(img_array)
       #  st.image(picture, caption="Captured Image", use_column_width=True)
       
-
+st.button("📷 Capture une Photo", on_click=active_cam, key="my_button", help="Capture une photo")
+# titre de la page
+st.markdown(
+    f"""
+    <h1 style='text-align: center;'>Découvre ce que tu bois 🍷 !</h1>
+    """,
+    unsafe_allow_html=True
+)  
 
 # Connexion à la base de données local
 
