@@ -108,7 +108,7 @@ def import_to_postgres(local_db_connection_string, table_name, data):
     cur.close()
     conn.close()
 
-if st.button('Importer Cheval Blanc depuis Supabase'):
+if st.button('Importer Cheval Noir depuis Supabase'):
     try:
         supabase_api_url = 'https://dcnysjdqaezmjsjvsymo.supabase.co/rest/v1/test'
         supabase_headers = {
@@ -116,7 +116,7 @@ if st.button('Importer Cheval Blanc depuis Supabase'):
             'Content-Type': 'application/json',
             'apikey' : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRjbnlzamRxYWV6bWpzanZzeW1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDU0Mjc1NTEsImV4cCI6MjAyMTAwMzU1MX0.wjQT5SHkmJIT0aKOZNHwx5ciAqL6PrkemYladC5T1l0'
         }
-        nom_vin = 'Cheval Blanc'
+        nom_vin = 'Cheval Noir'
 
         data = extract_from_supabase(supabase_api_url, supabase_headers, nom_vin)
         
