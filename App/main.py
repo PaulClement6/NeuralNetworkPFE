@@ -2,22 +2,26 @@ import streamlit as st
 import numpy as np
 from algo import *
 from PIL import Image
+import psycopg2
+import streamlit as st
+import requests
+import csv
+from io import StringIO
 
+st.title("Découvre ce que tu bois !")
 
-
-# Ajouter un bouton pour ouvrir et fermer la caméra
+# Ajout de variable session permmettant d'ouvrir la camera
 if "bouton" not in st.session_state:
     st.session_state.bouton = False
-if "mod" not in st.session_state:
-    st.session_state.mod = False
-#fontion de changement d'état pour l'appel du modèle
-def active_algo():
-    st.session_state.mod = not st.session_state.mod
-#fonction de changment d'état pour la caméra
+
+
+#fonction de changment de la variable d'etat pour activation de la caméra
 def active_cam():
     st.session_state.bouton = not st.session_state.bouton
 
-button = st.button("Open/Close Camera", on_click=active_cam)
+# creation de bouton pour ouvrir la camera
+
+st.button("Open/Close Camera", on_click=active_cam)
 
 # Vérifier si la caméra est ouverte avant de capturer une photo
 if st.session_state.bouton:
@@ -31,18 +35,10 @@ if st.session_state.bouton:
         st.write(img_array.shape)
       #  st.image(picture, caption="Captured Image", use_column_width=True)
       
-    
-
-st.title("Découvre ce que tu bois !")
 
 
 # Connexion à la base de données local
 
-import psycopg2
-import streamlit as st
-import requests
-import csv
-from io import StringIO
 
 # Fonction de configuration de la connexion à la base de données
 def connect_to_db():
@@ -65,25 +61,33 @@ def run_query(query):
     conn.close()
     return data
 
-# Test de connexion réussie
 
-# st.title('Test de connexion à la base de données')
-# if st.button('Tester la connexion'):
-#    try:
-#        data = run_query("SELECT version();")  # Requête de test
-#        st.success(f"Connexion réussie ! Version de PostgreSQL : {data[0][0]}")
-#    except Exception as e:
-#        st.error(f"Échec de la connexion : {e}")
 
-if st.button('selectionner un filtre'):
+
+#creation de variable de session pour activation du filtre
+if "mod" not in st.session_state:
+    st.session_state.mod = False
+
+#fonction permettant de changer la variable d'ouverture du filtre
+def active_filre():
+    st.session_state.mod = not st.session_state.mod
+
+#creation de bouton pour filtrer par rapport au region
+st.button('selectionner un filtre',on_click=active_filre)
+
+#affichage de la combobox pour selectionner la region
+if st.session_state.mod:
     option = st.selectbox(
-   "How would you like to be contacted?",
-   ("Email", "Home phone", "Mobile phone"),
+   "",
+   ("Bordeaux", "Bourgogne", "champagne"),
    index=None,
-   placeholder="Select contact method...",
+   placeholder="Selectionner une region ...",
 )
+#creation d'une variable pour stocker l'option
+
+st.button("importer la region : ",option)
     
-st.write('You selected:', option)
+
 
 
 if st.button('Afficher les données'):
