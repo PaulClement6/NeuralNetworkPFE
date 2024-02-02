@@ -1,2 +1,0 @@
-#st-supabase-connection==x.x.x
-psycopg2-binary

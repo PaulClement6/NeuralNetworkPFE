@@ -44,16 +44,18 @@ import requests
 import csv
 from io import StringIO
 
-# Configuration de la connexion à la base de données
+# Fonction de configuration de la connexion à la base de données
 def connect_to_db():
     conn = psycopg2.connect(
-        dbname="bourgogne",  # Nom de la base de données
-        user="postgres",  # Nom d'utilisateur
+        #bourgogne
+        dbname="vinAI",  # Nom de la base de données
+        user="root",  # Nom d'utilisateur
+        password = "root",
         host="localhost",  # l'adresse IP de votre serveur
         port="5432"
     )
     return conn
-
+#Fonction permettant d'envoyer une requete sql a postgre
 def run_query(query):
     conn = connect_to_db()
     cur = conn.cursor()
@@ -131,3 +133,16 @@ if st.button('Importer Cheval Noir depuis Supabase'):
         st.success('Importation réussie !')
     except Exception as e:
         st.error(f'Une erreur est survenue : {e}')
+import requests
+
+def check_internet():
+    try:
+        requests.get('http://www.google.com', timeout=1)
+        return True
+    except requests.ConnectionError:
+        return False
+
+if check_internet():
+    st.title("Vous êtes connecté à Internet.")
+else:
+    st.title("Vous n'êtes pas connecté à Internet.")
