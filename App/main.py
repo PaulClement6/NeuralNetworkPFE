@@ -75,6 +75,17 @@ def run_query(query):
 #    except Exception as e:
 #        st.error(f"Échec de la connexion : {e}")
 
+if st.button('selectionner un filtre'):
+    option = st.selectbox(
+   "How would you like to be contacted?",
+   ("Email", "Home phone", "Mobile phone"),
+   index=None,
+   placeholder="Select contact method...",
+)
+    
+st.write('You selected:', option)
+
+
 if st.button('Afficher les données'):
     data = run_query("SELECT * FROM ma_table")
     for row in data:
@@ -146,3 +157,4 @@ if check_internet():
     st.title("Vous êtes connecté à Internet.")
 else:
     st.title("Vous n'êtes pas connecté à Internet.")
+
