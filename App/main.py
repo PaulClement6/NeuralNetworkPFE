@@ -9,16 +9,14 @@ import csv
 from io import StringIO
 
 def models(picture):
-    description = ""
-    # image_path = "vin.jpg"
+    description = []
     model_path = "./best.pt"
 
     model = YOLO(model_path)
     # image = cv2.imread(image_path)
 
     predictions = model(picture)
-    
-    
+
     if predictions[0].boxes[0].conf >= 0.7 :
         x1, y1, x2, y2 = predictions[0].boxes.xyxy[0]
         confidence = "Wine bottle: {}%".format(int(predictions[0].boxes[0].conf * 100))
@@ -27,9 +25,9 @@ def models(picture):
 
         reader = easyocr.Reader(['fr','en'])
         result = reader.readtext(picture)
-        
+
         # picturebis = cv2.rectangle(picture.copy, (x1, y1), (x2, y2), (255,0,0), thickness = 8)
-        
+
         st.image(bottle)
 
         # # Afficher l'image avec les bounding boxes
@@ -44,8 +42,8 @@ def models(picture):
         if(result):
             for detection in result:
                 mot = detection[1]
-                description +=  mot + " "
-            st.write(description.lower())
+                description.append(mot)
+            st.write(description)
         else:
             st.title("Aucun mot détecté")
     else:
@@ -72,12 +70,12 @@ st.button("Open/Close Camera", on_click=active_cam)
 if st.session_state.bouton:
     picture = st.camera_input("")
     if picture:
-        
+
         img=Image.open(picture)
         img_array=np.array(img)
         models(img_array)
       #  st.image(picture, caption="Captured Image", use_column_width=True)
-      
+
 
 
 # Connexion à la base de données local
@@ -126,7 +124,7 @@ if st.session_state.mod:
    placeholder="Selectionner une region ...",
 )
 #creation d'une variable pour stocker l'option
-    
+
     st.button("importer la region",option)
 
 #var session pour bouton postgre
@@ -148,7 +146,7 @@ if st.session_state.bouton_postgre:
         st.write(row)
 
 # Exportation des données supabase vers postgreSQL
-        
+
 def extract_from_supabase(api_url, headers, nom_vin):
     params = {'Nom': f'eq.{nom_vin}'}
     response = requests.get(api_url, headers=headers, params=params)
@@ -160,7 +158,7 @@ def extract_from_supabase(api_url, headers, nom_vin):
 def import_to_postgres(local_db_connection_string, table_name, data):
     conn = psycopg2.connect(local_db_connection_string)
     cur = conn.cursor()
-    
+
     # Si les données sont sous forme de JSON et doivent être converties en CSV
     csv_data = StringIO()
     writer = csv.writer(csv_data)
@@ -170,7 +168,7 @@ def import_to_postgres(local_db_connection_string, table_name, data):
 
     # Se déplacer au début du StringIO pour lire son contenu
     csv_data.seek(0)
-    
+
     # Importer les données dans PostgreSQL
     cur.copy_expert(f"COPY {table_name} FROM STDIN WITH CSV HEADER", csv_data)
     conn.commit()
@@ -188,7 +186,6 @@ if st.button('Importer Cheval Noir depuis Supabase'):
         nom_vin = 'Cheval Noir'
 
         data = extract_from_supabase(supabase_api_url, supabase_headers, nom_vin)
-        
 
         # Configuration pour l'importation dans PostgreSQL
         local_db_connection_string = 'postgresql://samsam@localhost/vinia'
