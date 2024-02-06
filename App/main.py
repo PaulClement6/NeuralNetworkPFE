@@ -5,6 +5,18 @@ import psycopg2
 import streamlit as st
 import csv
 from io import StringIO
+
+
+page_bg_img = f"""
+<style>
+[data-testid="stApp"] {{
+background-image: url("https://www.neozone.org/blog/wp-content/uploads/2021/03/vin-002-780x470.jpg");
+background-size: cover;
+}}
+</style>
+"""
+st.markdown(page_bg_img, unsafe_allow_html=True)
+
 import requests
 from ultralytics import YOLO
 from fonction_modele import *
@@ -13,8 +25,7 @@ from fonction_bdd import *
 
 
 
-# titre de la page
-st.title("Découvre ce que tu bois !")
+#st.title("Découvre ce que tu bois !")
 
 
 
@@ -23,7 +34,7 @@ st.title("Découvre ce que tu bois !")
 model_path = "./best.pt"
 model = YOLO(model_path)
 
-st.button("Open/Close Camera", on_click=active_cam)
+#st.button("Open/Close Camera", on_click=active_cam)
 
 # Vérifier si la caméra est ouverte avant de capturer une photo
 if st.session_state.bouton:
@@ -32,9 +43,52 @@ if st.session_state.bouton:
 
         img=Image.open(picture)
         img_array=np.array(img)
-        models(img_array, model)
-    
+        models(img_array)
+      #  st.image(picture, caption="Captured Image", use_column_width=True)
+      
+st.button("📷 Capture une Photo", on_click=active_cam, key="my_button", help="Capture une photo")
+# titre de la page
+st.markdown(
+    f"""
+    <h1 style='text-align: center;'>Découvre ce que tu bois 🍷 !</h1>
+     <style>
+    """,
+    unsafe_allow_html=True
+)  
 
+# Connexion à la base de données local
+
+
+# Fonction de configuration de la connexion à la base de données
+def connect_to_db():
+    conn = psycopg2.connect(
+        #bourgogne
+        dbname="vinia",  # Nom de la base de données
+        user="samsam",  # Nom d'utilisateur
+        host="localhost",  # l'adresse IP de votre serveur
+        port="5432"
+    )
+    return conn
+#Fonction permettant d'envoyer une requete sql a postgre
+def run_query(query):
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+    conn.close()
+    return data
+
+
+
+
+#creation de variable de session pour activation du filtre
+if "mod" not in st.session_state:
+    st.session_state.mod = False
+
+#fonction permettant de changer la variable d'ouverture du filtre
+def active_filre():
+    st.session_state.mod = not st.session_state.mod
 
 #creation de bouton pour filtrer par rapport au region
 st.button('selectionner un filtre',on_click=active_filre)
