@@ -8,6 +8,18 @@ import requests
 import csv
 from io import StringIO
 
+
+page_bg_img = f"""
+<style>
+[data-testid="stApp"] {{
+background-image: url("https://www.neozone.org/blog/wp-content/uploads/2021/03/vin-002-780x470.jpg");
+background-size: cover;
+}}
+</style>
+"""
+st.markdown(page_bg_img, unsafe_allow_html=True)
+
+
 def models(picture):
     description = ""
     # image_path = "vin.jpg"
@@ -82,6 +94,7 @@ st.button("📷 Capture une Photo", on_click=active_cam, key="my_button", help="
 st.markdown(
     f"""
     <h1 style='text-align: center;'>Découvre ce que tu bois 🍷 !</h1>
+     <style>
     """,
     unsafe_allow_html=True
 )  
