@@ -1,71 +1,28 @@
 import streamlit as st
 import numpy as np
-from algo import *
 from PIL import Image
 import psycopg2
 import streamlit as st
-import requests
 import csv
 from io import StringIO
 import requests
 from ultralytics import YOLO
-import easyocr
+from fonction_modele import *
+from fonction_bouton import *
+from fonction_bdd import *
 
-def models(picture):
-    description = ""
-    #modle IA OCR pour la reconaissance de
-    model_path = "./best.pt"
-
-
-    model = YOLO(model_path)
-    # image = cv2.imread(image_path)
-
-    predictions = model(picture)
-
-    if predictions[0].boxes[0].conf >= 0.7 :
-        x1, y1, x2, y2 = predictions[0].boxes.xyxy[0]
-        confidence = "Wine bottle: {}%".format(int(predictions[0].boxes[0].conf * 100))
-
-        bottle = picture[int(y1):int(y2), int(x1):int(x2)]
-
-        reader = easyocr.Reader(['fr','en'])
-        result = reader.readtext(picture)
-
-        # picturebis = cv2.rectangle(picture.copy, (x1, y1), (x2, y2), (255,0,0), thickness = 8)
-
-        st.image(bottle)
-
-
-
-        if(result):
-            for detection in result:
-                mot = detection[1]
-                description += ' '.join(mot)
-            st.write(description)
-            answer = filter_data(description)
-            st.title(answer)
-        else:
-            st.title("Aucun mot détecté")
-    else:
-        st.title("Aucun bouteille détectée")
 
 
 # titre de la page
 st.title("Découvre ce que tu bois !")
 
-# Ajout de variable session permmettant d'ouvrir la camera
-if "bouton" not in st.session_state:
-    st.session_state.bouton = False
 
 
-#fonction de changment de la variable d'etat pour activation de la caméra
-def active_cam():
-    st.session_state.bouton = not st.session_state.bouton
 
-# creation de bouton pour ouvrir la camera
+#varialbes utiliser pour appel du model
 model_path = "./best.pt"
-
 model = YOLO(model_path)
+
 st.button("Open/Close Camera", on_click=active_cam)
 
 # Vérifier si la caméra est ouverte avant de capturer une photo
@@ -75,53 +32,13 @@ if st.session_state.bouton:
 
         img=Image.open(picture)
         img_array=np.array(img)
-        models(img_array)
-      #  st.image(picture, caption="Captured Image", use_column_width=True)
+        models(img_array, model)
+    
 
-
-
-# Connexion à la base de données local
-
-
-# Fonction de configuration de la connexion à la base de données postgre
-def connect_to_db():
-    conn = psycopg2.connect(
-        #bourgogne
-
-        dbname="vinIA",  # Nom de la base de données
-        user="samsam",  # Nom d'utilisateur
-        host="localhost",  # l'adresse IP de votre serveur
-        port="5432"
-    )
-    return conn
-
-# Fonction permettant d'envoyer une requête SQL à PostgreSQL
-def run_query(query):
-    conn = connect_to_db()
-    cur = conn.cursor()
-    cur.execute(query)
-    if query.lower().startswith("select"):
-        data = cur.fetchall()
-    else:
-        data = None
-    conn.commit()
-    cur.close()
-    conn.close()
-    return data
-
-
-
-
-#creation de variable de session pour activation du filtre
-if "mod" not in st.session_state:
-    st.session_state.mod = False
-
-#fonction permettant de changer la variable d'ouverture du filtre
-def active_filre():
-    st.session_state.mod = not st.session_state.mod
 
 #creation de bouton pour filtrer par rapport au region
 st.button('selectionner un filtre',on_click=active_filre)
+
 
 #affichage de la combobox pour selectionner la region
 if st.session_state.mod:
@@ -138,10 +55,13 @@ if st.button("Importer la région :"):
     st.session_state.region_selectionnee = option
     st.write(f"Région sélectionnée pour l'importation : {st.session_state.region_selectionnee}")
     
+if "bouton_postgre" not in st.session_state:
+    st.session_state.bouton_postgre = False
+def active_affiche_data():
+    st.session_state.bouton_postgre= not st.session_state.bouton_postgre 
 
+st.button('Afficher les données depuis postgres',on_click=active_affiche_data())
 
-
-st.button('Afficher les données depuis postgres',on_click=active_affiche_data)
 
 if st.session_state.bouton_postgre:
     data = run_query("SELECT * FROM test")
