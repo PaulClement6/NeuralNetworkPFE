@@ -8,11 +8,14 @@ import requests
 import csv
 from io import StringIO
 import requests
-
+from ultralytics import YOLO
+import easyocr
 
 def models(picture):
-    description = []
+    description = ""
+    #modle IA OCR pour la reconaissance de
     model_path = "./best.pt"
+
 
     model = YOLO(model_path)
     # image = cv2.imread(image_path)
@@ -37,8 +40,10 @@ def models(picture):
         if(result):
             for detection in result:
                 mot = detection[1]
-                description.append(mot)
+                description += ' '.join(mot)
             st.write(description)
+            answer = filter_data(description)
+            st.title(answer)
         else:
             st.title("Aucun mot détecté")
     else:

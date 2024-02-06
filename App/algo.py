@@ -1,47 +1,53 @@
-import cv2
-import easyocr
-from ultralytics import YOLO
-import matplotlib.pyplot as plt
-#import logging
+import supabase_py
+import re
 
-#logging.basicConfig(level=logging.ERROR)
+url = "https://dcnysjdqaezmjsjvsymo.supabase.co"
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRjbnlzamRxYWV6bWpzanZzeW1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDU0Mjc1NTEsImV4cCI6MjAyMTAwMzU1MX0.wjQT5SHkmJIT0aKOZNHwx5ciAqL6PrkemYladC5T1l0"
+supabase = supabase_py.create_client(url, key)
 
-description = ""
-image_path = "vin.jpg"
-model_path = "./best.pt"
+def process_response(response):
+    results = []
+    score = {}
 
-model = YOLO(model_path)
-image = cv2.imread(image_path)
+    for index in response:
+        if index["id"] not in {result["id"] for result in results}:
+            results.append(index)
+            score[index["id"]] = 1
+        else:
+            score[index["id"]] = score.get(index["id"], 0) + 1
 
-predictions = model(image_path)
+    return results, score
 
-if predictions[0].boxes[0].conf >= 0.7 :
-    x1, y1, x2, y2 = predictions[0].boxes.xyxy[0]
-    x_box = [x1, x2, x2, x1, x1]
-    y_box = [y1, y1, y2, y2, y1]
-    confidence = "Wine bottle: {}%".format(int(predictions[0].boxes[0].conf * 100))
+def fetch_data(predictions):
 
-    bottle = image[int(y1):int(y2), int(x1):int(x2)]
+    if predictions["Date"]:
+        for date in predictions["Date"]:
+            for elem in predictions["Nom"]:
+                response = supabase.table('vins').select('*').eq('Date', date).ilike('Etiquette', f'%{elem}%').execute()['data']
+                if response:
+                    results, score = process_response(response)
 
-    reader = easyocr.Reader(['fr','en'])
-    result = reader.readtext(bottle)
-
-    # Afficher l'image avec les bounding boxes
-    plt.figure(figsize=(10, 10))
-    plt.subplot(1, 3, 1), plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB)), plt.title('Original image')
-    plt.text(x1-5, y1-40, confidence, color='red', fontsize=10, ha='left', va='top')
-    plt.subplot(1, 3, 1), plt.plot(x_box, y_box, c='red')
-    plt.subplot(1, 3, 2), plt.imshow(cv2.imread("fleche.jpg")), plt.axis("off")
-    plt.subplot(1, 3, 3), plt.imshow(cv2.cvtColor(bottle, cv2.COLOR_BGR2RGB)), plt.title('Bottle')
-    plt.show()
-
-    if(result):
-        for detection in result:
-            mot = detection[1]
-            description +=  mot + " "
-        print("Description IA :",description.lower())
     else:
-        print("Aucun mot détecté")
-else:
-    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB)), plt.title('Original image')
-    print("Aucune détection faite")
+        for elem in predictions["Nom"]:
+            response = supabase.table('vins').select('*').ilike('Etiquette', f'%{elem}%').execute()['data']
+            if response:
+                results, score = process_response(response)
+
+    return(max(results, key=lambda x: score[x['id']]))
+
+def filter_data(predict):
+
+    predictions = {'Nom': [], 'Date': []}
+    pattern = re.compile(r'\b\w+\b')
+    annee_regex = re.compile(r'\b\d{4}\b')
+        
+    mots_complets = pattern.findall(predict)
+
+    predictions['Nom'] = (sorted([mot for mot in mots_complets if len(mot) >= 2], key=len, reverse = True))
+
+    for mot in predictions['Nom']:
+        if annee_regex.match(mot):
+            predictions['Date'].append(mot)
+            predictions['Nom'].remove(mot)
+ 
+    return filter_data(predictions)
