@@ -20,37 +20,28 @@ def process_response(response):
 
 def fetch_data(predictions):
 
-    if predictions["Date"]:
-        for date in predictions["Date"]:
-            for elem in predictions["Nom"]:
-                response = supabase.table('vins').select('*').eq('Date', date).ilike('Etiquette', f'%{elem}%').execute()['data']
-                if response:
-                    process_response(response)
-                else:
-                    response = supabase.table('vins').select('*').ilike('Etiquette', f'%{elem}%').execute()['data']
-                    if response:
-                        process_response(response)
-
-    else:
-        for elem in predictions["Nom"]:
-            response = supabase.table('vins').select('*').ilike('Etiquette', f'%{elem}%').execute()['data']
-            if response:
-                results, score = process_response(response)
+    for elem in predictions:
+        response = supabase.table('vins').select('*').ilike('Etiquette', f'%{elem}%').execute()['data']
+        if response:
+            process_response(response)
 
 def filter_data(pred):
 
-    predictions = {'Nom': [], 'Date': []}
+    predictions = []
     pattern = re.compile(r'\b\w+\b')
-    annee_regex = re.compile(r'\b\d{4}\b')
-        
+
     mots_complets = pattern.findall(pred)
+    predictions = (sorted([mot for mot in mots_complets if len(mot) >= 2], key=len, reverse = True))
 
-    predictions['Nom'] = (sorted([mot for mot in mots_complets if len(mot) >= 2], key=len, reverse = True))
-
-    for mot in predictions['Nom']:
-        if annee_regex.match(mot):
-            predictions['Date'].append(mot)
-            predictions['Nom'].remove(mot)
-    
     fetch_data(predictions)
-    return (max(results, key=lambda x: score[x['id']]))
+
+    if score and max(score, key=lambda k: score[k]) > 1:
+        answer = max(results, key=lambda x: score[x['id']])
+        results = []
+        score = {}
+        return answer
+    else:
+        results = []
+        score = {}
+        return "Nous n'avons pas trouvé la bouteille dans notre base"
+        
