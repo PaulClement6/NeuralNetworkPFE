@@ -27,21 +27,20 @@ def fetch_data(predictions):
 
 def filter_data(pred):
 
+    results.clear()
+    score.clear()
+
     predictions = []
     pattern = re.compile(r'\b\w+\b')
 
     mots_complets = pattern.findall(pred)
     predictions = (sorted([mot for mot in mots_complets if len(mot) >= 2], key=len, reverse = True))
 
+    st.write(predictions)
     fetch_data(predictions)
 
     if score and max(score, key=lambda k: score[k]) > 1:
-        answer = max(results, key=lambda x: score[x['id']])
-        results = []
-        score = {}
-        return answer
+        return max(results, key=lambda x: score[x['id']])
     else:
-        results = []
-        score = {}
         return "Nous n'avons pas trouvé la bouteille dans notre base"
         
