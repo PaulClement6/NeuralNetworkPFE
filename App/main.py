@@ -7,6 +7,8 @@ import streamlit as st
 import requests
 import csv
 from io import StringIO
+import requests
+
 
 def models(picture):
     description = []
@@ -30,14 +32,7 @@ def models(picture):
 
         st.image(bottle)
 
-        # # Afficher l'image avec les bounding boxes
-        # plt.figure(figsize=(10, 10))
-        # plt.subplot(1, 3, 1), plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB)), plt.title('Original image')
-        # plt.text(x1-5, y1-40, confidence, color='red', fontsize=10, ha='left', va='top')
-        # plt.subplot(1, 3, 1), plt.plot(x_box, y_box, c='red')
-        # plt.subplot(1, 3, 2), plt.imshow(cv2.imread("fleche.jpg")), plt.axis("off")
-        # plt.subplot(1, 3, 3), plt.imshow(cv2.cvtColor(bottle, cv2.COLOR_BGR2RGB)), plt.title('Bottle')
-        # plt.show()
+
 
         if(result):
             for detection in result:
@@ -63,7 +58,9 @@ def active_cam():
     st.session_state.bouton = not st.session_state.bouton
 
 # creation de bouton pour ouvrir la camera
+model_path = "./best.pt"
 
+model = YOLO(model_path)
 st.button("Open/Close Camera", on_click=active_cam)
 
 # Vérifier si la caméra est ouverte avant de capturer une photo
@@ -81,7 +78,7 @@ if st.session_state.bouton:
 # Connexion à la base de données local
 
 
-# Fonction de configuration de la connexion à la base de données
+# Fonction de configuration de la connexion à la base de données postgre
 def connect_to_db():
     conn = psycopg2.connect(
         #bourgogne
@@ -139,7 +136,7 @@ if st.button("Importer la région :"):
 
 
 
-st.button('Afficher les données de puis postgres',on_click=active_affiche_data)
+st.button('Afficher les données depuis postgres',on_click=active_affiche_data)
 
 if st.session_state.bouton_postgre:
     data = run_query("SELECT * FROM test")
@@ -205,7 +202,8 @@ if st.button('Importer sous-table region depuis Supabase') and st.session_state.
         st.success('Importation réussie !')
     except Exception as e:
         st.error(f'Une erreur est survenue : {e}')
-import requests
+
+#fonction utilisé pour verifier la conexion a internet
 
 def check_internet():
     try:
@@ -215,7 +213,7 @@ def check_internet():
         return False
 
 if check_internet():
-    st.title("Vous êtes connecté à Internet.")
+    st.write("Vous êtes connecté à Internet.")
 else:
-    st.title("Vous n'êtes pas connecté à Internet.")
+    st.write("Vous n'êtes pas connecté à Internet.")
 
