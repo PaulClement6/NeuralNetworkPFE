@@ -85,11 +85,8 @@ if st.session_state.bouton:
 def connect_to_db():
     conn = psycopg2.connect(
         #bourgogne
-<<<<<<< HEAD
+
         dbname="vinIA",  # Nom de la base de données
-=======
-        dbname="vinia",  # Nom de la base de données
->>>>>>> 37548741edefdc630c005ee9daf7b845f5658b2f
         user="samsam",  # Nom d'utilisateur
         host="localhost",  # l'adresse IP de votre serveur
         port="5432"
@@ -134,24 +131,11 @@ if st.session_state.mod:
 )
 #creation d'une variable pour stocker l'option
 
-<<<<<<< HEAD
 # Bouton pour stocker la région sélectionnée dans la variable de session
 if st.button("Importer la région :"):
     st.session_state.region_selectionnee = option
     st.write(f"Région sélectionnée pour l'importation : {st.session_state.region_selectionnee}")
     
-=======
-    st.button("importer la region",option)
-
-#var session pour bouton postgre
-if "bouton_postgre" not in st.session_state:
-    st.session_state.bouton_postgre = False
-
-
-#fonction de changment de la variable d'etat pour activation de la caméra
-def active_affiche_data():
-    st.session_state.bouton_postgre = not st.session_state.bouton_postgre
->>>>>>> 37548741edefdc630c005ee9daf7b845f5658b2f
 
 
 
@@ -166,15 +150,9 @@ def truncate_table(table_name):
     run_query(f"TRUNCATE TABLE {table_name} CASCADE;")
 
 # Exportation des données supabase vers postgreSQL
-<<<<<<< HEAD
         
 def extract_from_supabase(api_url, headers, nom_region):
     params = {'region': f'eq.{nom_region}'}
-=======
-
-def extract_from_supabase(api_url, headers, nom_vin):
-    params = {'Nom': f'eq.{nom_vin}'}
->>>>>>> 37548741edefdc630c005ee9daf7b845f5658b2f
     response = requests.get(api_url, headers=headers, params=params)
     response.raise_for_status()
     return response.json()  # Retourne les données JSON filtrées
@@ -184,13 +162,8 @@ def extract_from_supabase(api_url, headers, nom_vin):
 def import_to_postgres(local_db_connection_string, table_name, data):
     conn = psycopg2.connect(local_db_connection_string)
     cur = conn.cursor()
-<<<<<<< HEAD
     
 # Si les données sont sous forme de JSON et doivent être converties en CSV
-=======
-
-    # Si les données sont sous forme de JSON et doivent être converties en CSV
->>>>>>> 37548741edefdc630c005ee9daf7b845f5658b2f
     csv_data = StringIO()
     writer = csv.writer(csv_data)
     writer.writerow(['id', 'Nom', 'Date','Description', 'Note', 'cepage', 'region'])  # Entêtes de colonnes
@@ -219,12 +192,8 @@ if st.button('Importer sous-table region depuis Supabase') and st.session_state.
         }
         nom_region = st.session_state.region_selectionnee
 
-<<<<<<< HEAD
         data = extract_from_supabase(supabase_api_url, supabase_headers, nom_region)
         
-=======
-        data = extract_from_supabase(supabase_api_url, supabase_headers, nom_vin)
->>>>>>> 37548741edefdc630c005ee9daf7b845f5658b2f
 
         # Configuration pour l'importation dans PostgreSQL
         local_db_connection_string = 'postgresql://samsam@localhost/vinia'
