@@ -23,8 +23,22 @@ def models(picture, model):
             for detection in result:
                 mot = detection[1]
                 description += f"{mot} "
-            answer = filter_data(description)
-            st.title(answer)
+            answer, wifi = filter_data(description)
+            if answer:
+                if (wifi):
+                    nom,date,note,desc,cepage,region,conservation = answer['Date'], answer['Description'], answer['Note'], answer['cepage'], answer['region'], answer['Nom'], answer['Conservation']
+                else:
+                    nom,date,note,desc,cepage,region,conservation = answer[7], answer[2], answer[4], answer[3], answer[5], answer[6], answer[8]
+            
+                st.write("Nom: ",nom)
+                st.write("Date: ", date)
+                st.write("Note: ",note)
+                st.write("Description: ",desc)
+                st.write("Cepage: ",cepage)
+                st.write("Region: ",region)
+                st.write("Conservation: ",conservation)
+            else:
+                st.write("Aucune correspondance dans notre base")
         else:
             st.title("Aucun mot détecté")
     else:

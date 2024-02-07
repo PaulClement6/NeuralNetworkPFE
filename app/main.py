@@ -12,17 +12,14 @@ from fonction_bouton import *
 from fonction_bdd import *
 
 
-
 # titre de la page
 st.title("Découvre ce que tu bois !")
-
-
-
 
 #varialbes utiliser pour appel du model
 model_path = "./best.pt"
 model = YOLO(model_path)
-
+if "bouton" not in st.session_state:
+    st.session_state.bouton = False
 st.button("Open/Close Camera", on_click=active_cam)
 
 # Vérifier si la caméra est ouverte avant de capturer une photo
@@ -39,7 +36,8 @@ if st.session_state.bouton:
 #creation de bouton pour filtrer par rapport au region
 st.button('selectionner un filtre',on_click=active_filre)
 
-
+if "mod" not in st.session_state:
+    st.session_state.mod = False
 #affichage de la combobox pour selectionner la region
 if st.session_state.mod:
     option = st.selectbox(
@@ -64,7 +62,7 @@ st.button('Afficher les données depuis postgres',on_click=active_affiche_data()
 
 
 if st.session_state.bouton_postgre:
-    data = run_query("SELECT * FROM test")
+    data = run_query("SELECT * FROM vins")
     for row in data:
         st.write(row)
 
