@@ -26,7 +26,7 @@ def models(picture, model):
             answer, wifi = filter_data(description)
             if answer:
                 if (wifi):
-                    nom,date,note,desc,cepage,region,conservation = answer['Date'], answer['Description'], answer['Note'], answer['cepage'], answer['region'], answer['Nom'], answer['Conservation']
+                    date,desc, note,cepage,region,nom,conservation = answer['Date'], answer['Description'], answer['Note'], answer['cepage'], answer['region'], answer['Nom'], answer['Conservation']
                 else:
                     nom,date,note,desc,cepage,region,conservation = answer[7], answer[2], answer[4], answer[3], answer[5], answer[6], answer[8]
             
