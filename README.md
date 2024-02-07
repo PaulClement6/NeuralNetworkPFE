@@ -1,2 +1,2 @@
 # NeuralNetworkPFE
-Réseau de neurone PFE ECE 
+Réseau de neurones PFE ECE 
