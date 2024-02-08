@@ -17,7 +17,3 @@ def active_cam():
 def active_filre():
     st.session_state.mod = not st.session_state.mod
 ######################################activation  import postgre##################
-if "bouton_postgre" not in st.session_state:
-    st.session_state.bouton_postgre = False
-def active_affiche_data():
-    st.session_state.bouton_postgre= not st.session_state.bouton_postgre 

@@ -108,53 +108,55 @@ def import_to_postgres(local_db_connection_string, table_name, data):
     cur.close()
     conn.close()
 # Bouton pour stocker la région sélectionnée dans la variable de session
-if st.button("valider"):
-    st.session_state.region_selectionnee = option
-    try:
+    if st.button("valider"):
+          
+
+          st.session_state.region_selectionnee = option
+          try:
+              
          # Effacer les données de la table "vins" avant l'importation
-        truncate_table("vins")
+              truncate_table("vins")
         
-        supabase_api_url = 'https://dcnysjdqaezmjsjvsymo.supabase.co/rest/v1/vins'
-        supabase_headers = {
+              supabase_api_url = 'https://dcnysjdqaezmjsjvsymo.supabase.co/rest/v1/vins'
+              supabase_headers = {
             'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRjbnlzamRxYWV6bWpzanZzeW1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDU0Mjc1NTEsImV4cCI6MjAyMTAwMzU1MX0.wjQT5SHkmJIT0aKOZNHwx5ciAqL6PrkemYladC5T1l0',
             'Content-Type': 'application/json',
             'apikey' : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRjbnlzamRxYWV6bWpzanZzeW1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDU0Mjc1NTEsImV4cCI6MjAyMTAwMzU1MX0.wjQT5SHkmJIT0aKOZNHwx5ciAqL6PrkemYladC5T1l0'
         }
        
-        nom_region = st.session_state.region_selectionnee
+              nom_region = st.session_state.region_selectionnee
 
-        data = extract_from_supabase(supabase_api_url, supabase_headers, nom_region)
+              data = extract_from_supabase(supabase_api_url, supabase_headers, nom_region)
         
 
         # Configuration pour l'importation dans PostgreSQL
-        local_db_connection_string = 'postgresql://samsam@localhost/vinia'
-        table_name = 'vins'
+              local_db_connection_string = 'postgresql://samsam@localhost/vinia'
+              table_name = 'vins'
 
         # Importation des données dans PostgreSQL
-        import_to_postgres(local_db_connection_string, table_name, data)
+              import_to_postgres(local_db_connection_string, table_name, data)
 
-        st.success('Importation réussie !')
-    except Exception as e:
-        st.error(f'Une erreur est survenue : {e}')
+              st.success('Importation réussie !')
+          except Exception as e:
+              st.error(f'Une erreur est survenue : {e}')
    
-    
-if "bouton_postgre" not in st.session_state:
-    st.session_state.bouton_postgre = False
-def active_affiche_data():
-    st.session_state.bouton_postgre= not st.session_state.bouton_postgre 
+############################ Boutont affiche donnée BDD postgres#######################################
 
-st.button('Afficher les données depuis postgres',on_click=active_affiche_data())
+#if "bouton_postgre" not in st.session_state:
+#    st.session_state.bouton_postgre = False
+#def active_affiche_data():
+#    st.session_state.bouton_postgre= not st.session_state.bouton_postgre 
 
-
-if st.session_state.bouton_postgre:
-    data = run_query("SELECT * FROM vins")
-    for row in data:
-        st.write(row)
+#st.button('Afficher les données depuis postgres',on_click=active_affiche_data())
 
 
+#if st.session_state.bouton_postgre==True:
+#    data = run_query("SELECT * FROM vins")
+#    for row in data:
+#        st.write(row)
 
-# Exportation des données supabase vers postgreSQL
-        
+
+
 
 st.button("📷 Capture une Photo", on_click=active_cam, key="my_button", help="Capture une photo")
 
