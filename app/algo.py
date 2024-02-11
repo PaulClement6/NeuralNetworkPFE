@@ -23,10 +23,12 @@ def fetch_data(predictions, cursor, wifi):
 
     for elem in predictions:
         if wifi:
-            response = supabase.table('vins').select('*').ilike('Etiquette', f'%{elem}%').execute()['data']
+            response = supabase.table('vins').select('*').ilike('etiquette', f'%{elem}%').execute()['data']
             if response:
                 for index in response:
+                    
                     if index["id"] not in [result["id"] for result in results]:
+
                         results.append(index)
                         score[index["id"]] = 1
                     else:
@@ -42,7 +44,7 @@ def fetch_data(predictions, cursor, wifi):
                     else:
                         score[index[0]] = score.get(index[0], 0) + 1
 
-    if score and max(score, key=lambda k: score[k]) > 1:
+    if score and (max(score, key=lambda k: score[k])) > 1:
         if wifi:
             return max(results, key=lambda x: score[x['id']])
         else:

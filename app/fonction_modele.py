@@ -7,8 +7,11 @@ def models(picture, model):
     description = ""
     #modle IA OCR pour la reconaissance de
     predictions = model(picture)
+   
 
-    if predictions[0].boxes[0].conf >= 0.5 :
+    if predictions[0] and predictions[0].boxes[0].conf >= 0.6 :
+        
+        
         x1, y1, x2, y2 = predictions[0].boxes.xyxy[0]
         confidence = "Wine bottle: {}%".format(int(predictions[0].boxes[0].conf * 100))
 
