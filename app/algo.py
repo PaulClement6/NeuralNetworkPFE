@@ -44,7 +44,7 @@ def fetch_data(predictions, cursor, wifi):
                     else:
                         score[index[0]] = score.get(index[0], 0) + 1
 
-    if score and (max(score, key=lambda k: score[k])) > 1:
+    if score and (max(score, key=lambda k: score[k])) > 2:
         if wifi:
             return max(results, key=lambda x: score[x['id']])
         else:
